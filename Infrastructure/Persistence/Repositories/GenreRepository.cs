@@ -13,12 +13,12 @@ namespace MvcCleanArch.Infrastructure.Persistence.Repositories
             _genericRepository = genericRepository;
         }
 
-        public async Task AddGenreAsync(Genre genre)
+        public async Task AddAsync(Genre genre)
         {
             await _genericRepository.AddAsync(genre);
         }
 
-        public async Task DeleteGenreAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             var genre = await _genericRepository.GetByIdAsync(id);
             if (genre != null)
@@ -27,12 +27,12 @@ namespace MvcCleanArch.Infrastructure.Persistence.Repositories
             }
         }
 
-        public async Task<IEnumerable<Genre>> GetAllGenresAsync()
+        public async Task<IEnumerable<Genre>> GetAllAsync()
         {
             return await _genericRepository.GetAllAsync();
         }
 
-        public async Task<Genre> GetGenreByIdAsync(Guid id)
+        public async Task<Genre> GetByIdAsync(Guid id)
         {
             var genre = await _genericRepository.GetByIdAsync(id);
             if (genre == null)
@@ -42,7 +42,7 @@ namespace MvcCleanArch.Infrastructure.Persistence.Repositories
             return genre;
         }
 
-        public async Task UpdateGenreAsync(Genre genre)
+        public async Task UpdateAsync(Genre genre)
         {
             await _genericRepository.UpdateAsync(genre);
         }

@@ -17,7 +17,7 @@ namespace MvcCleanArch.Controllers
         // GET: Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _genreRepository.GetAllGenresAsync());
+            return View(await _genreRepository.GetAllAsync());
         }
 
         // GET: Genres/Details/5
@@ -27,7 +27,7 @@ namespace MvcCleanArch.Controllers
             {
                 return NotFound();
             }
-            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
+            var genre = await _genreRepository.GetByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -52,7 +52,7 @@ namespace MvcCleanArch.Controllers
             if (ModelState.IsValid)
             {
                 genre.Id = Guid.NewGuid();
-                await _genreRepository.AddGenreAsync(genre);
+                await _genreRepository.AddAsync(genre);
                 return RedirectToAction(nameof(Index));
             }
             return View(genre);
@@ -66,7 +66,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
+            var genre = await _genreRepository.GetByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -90,7 +90,7 @@ namespace MvcCleanArch.Controllers
             {
                 try
                 {
-                    await _genreRepository.UpdateGenreAsync(genre);
+                    await _genreRepository.UpdateAsync(genre);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -109,7 +109,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
+            var genre = await _genreRepository.GetByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -123,10 +123,10 @@ namespace MvcCleanArch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var genre = await _genreRepository.GetGenreByIdAsync(id);
+            var genre = await _genreRepository.GetByIdAsync(id);
             if (genre != null)
             {
-                await _genreRepository.DeleteGenreAsync(id);
+                await _genreRepository.DeleteAsync(id);
             }
 
             return RedirectToAction(nameof(Index));

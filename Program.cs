@@ -28,6 +28,10 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+// builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+// builder.Services.AddScoped<IMovieUserRepository, MovieUserRepository>();
+// builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 

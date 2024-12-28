@@ -4,11 +4,10 @@ namespace MvcCleanArch.Domain.Interfaces
 {
     public interface IGenreRepository
     {
-        Task<IEnumerable<Genre>> GetAllGenresAsync();
-        Task<Genre> GetGenreByIdAsync(Guid id);
-        Task AddGenreAsync(Genre genre);
-        Task UpdateGenreAsync(Genre genre);
-        Task DeleteGenreAsync(Guid id);
-
+        Task<IEnumerable<Genre>> GetAllAsync();
+        Task<Genre> GetByIdAsync(Guid id);
+        Task AddAsync(Genre genre);
+        Task UpdateAsync(Genre genre);
+        Task DeleteAsync(Guid id);
     }
 }
