@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Domain.Interfaces;
 using MvcCleanArch.Infrastructure.Persistence.DbContext;
@@ -44,6 +45,11 @@ namespace MvcCleanArch.Infrastructure.Persistence.Repositories
         {
             _dbSet.Remove(entity);
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbSet.AnyAsync(predicate);
         }
 
     }

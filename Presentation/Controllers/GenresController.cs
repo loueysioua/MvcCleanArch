@@ -1,28 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using MvcCleanArch.Infrastructure.Persistence.DbContext;
 using MvcCleanArch.Domain.Models;
+using MvcCleanArch.Domain.Interfaces;
 
 namespace MvcCleanArch.Controllers
 {
     public class GenresController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IGenreRepository _genreRepository;
 
-        public GenresController(ApplicationDbContext context)
+        public GenresController(IGenreRepository genreRepository)
         {
-            _context = context;
+            _genreRepository = genreRepository;
         }
 
         // GET: Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Genre.ToListAsync());
+            return View(await _genreRepository.GetAllGenresAsync());
         }
 
         // GET: Genres/Details/5
@@ -32,9 +27,7 @@ namespace MvcCleanArch.Controllers
             {
                 return NotFound();
             }
-
-            var genre = await _context.Genre
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -59,8 +52,7 @@ namespace MvcCleanArch.Controllers
             if (ModelState.IsValid)
             {
                 genre.Id = Guid.NewGuid();
-                _context.Add(genre);
-                await _context.SaveChangesAsync();
+                await _genreRepository.AddGenreAsync(genre);
                 return RedirectToAction(nameof(Index));
             }
             return View(genre);
@@ -74,7 +66,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre.FindAsync(id);
+            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -98,19 +90,11 @@ namespace MvcCleanArch.Controllers
             {
                 try
                 {
-                    _context.Update(genre);
-                    await _context.SaveChangesAsync();
+                    await _genreRepository.UpdateGenreAsync(genre);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GenreExists(genre.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -125,8 +109,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var genre = await _context.Genre
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var genre = await _genreRepository.GetGenreByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -140,19 +123,18 @@ namespace MvcCleanArch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var genre = await _context.Genre.FindAsync(id);
+            var genre = await _genreRepository.GetGenreByIdAsync(id);
             if (genre != null)
             {
-                _context.Genre.Remove(genre);
+                await _genreRepository.DeleteGenreAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GenreExists(Guid id)
-        {
-            return _context.Genre.Any(e => e.Id == id);
-        }
+
+
     }
+
+
 }
