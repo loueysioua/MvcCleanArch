@@ -12,8 +12,9 @@ namespace MvcCleanArch.Domain.Models
     [Key]
     public Guid MovieId { get; set; }
     [Key]
-    public string UserId { get; set; }
-    public virtual Movie? Movie { get; set; }
-    public virtual AppUser? User { get; set; }
+    public required string UserId { get; set; }
+    public bool IsFavourite { get; set; }
+    public virtual required Movie Movie { get; set; }
+    public virtual required AppUser User { get; set; }
   }
 }
