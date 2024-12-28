@@ -12,7 +12,7 @@ namespace MvcCleanArch.Models
     [Key]
     public Guid MovieId { get; set; }
     [Key]
-    public Guid UserId { get; set; }
+    public string UserId { get; set; }
     public virtual Movie? Movie { get; set; }
     public virtual AppUser? User { get; set; }
   }

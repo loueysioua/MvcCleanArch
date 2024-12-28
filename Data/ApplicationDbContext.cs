@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Models;
 
@@ -32,5 +32,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
 
         base.OnModelCreating(modelBuilder);
     }
+
+public DbSet<MvcCleanArch.Models.Genre> Genre { get; set; } = default!;
 
 }
