@@ -16,7 +16,7 @@ namespace MvcCleanArch.Domain.Models
     [Display(Name = "Movie Name")]
     [StringLength(100, ErrorMessage = "Movie Name must be at most 100 characters long")]
     [MinLength(2, ErrorMessage = "Movie Name must be at least 2 characters long")]
-    public string? Name { get; set; }
+    public required string Name { get; set; }
 
     [Required]
     [ForeignKey("Genre")]
