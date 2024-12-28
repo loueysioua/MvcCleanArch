@@ -7,8 +7,8 @@ namespace MvcCleanArch.Domain.Interfaces
         Task<IEnumerable<MovieUser>> GetAllAsync();
         Task<IEnumerable<MovieUser>> GetFavoritesAsync();
         Task<Genre> GetByIdAsync(Guid id);
-        Task AddAsync(Movie movie);
-        Task UpdateAsync(Movie movie);
+        Task AddAsync(MovieUser movieUser);
+        Task UpdateAsync(MovieUser movieUser);
         Task DeleteAsync(Guid id);
     }
 }
