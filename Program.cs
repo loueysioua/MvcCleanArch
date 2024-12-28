@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using MvcCleanArch.Data;
-using MvcCleanArch.Models;
+using MvcCleanArch.Infrastructure.Persistence.DbContext;
+using MvcCleanArch.Domain.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +25,13 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     AddDefaultUI()
     .AddDefaultTokenProviders();
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+            .AddRazorOptions(options =>
+            {
+                options.ViewLocationFormats.Clear();
+                options.ViewLocationFormats.Add("/Presentation/Views/{1}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Presentation/Views/Shared/{0}.cshtml");
+            });
 
 var app = builder.Build();
 

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using MvcCleanArch.Models;
+using MvcCleanArch.Domain.Models;
 
 namespace MvcCleanArch.Areas.Identity.Pages.Account
 {

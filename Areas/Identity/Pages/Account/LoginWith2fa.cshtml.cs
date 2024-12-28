@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using MvcCleanArch.Models;
+using MvcCleanArch.Domain.Models;
 
 namespace MvcCleanArch.Areas.Identity.Pages.Account
 {
