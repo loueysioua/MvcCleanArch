@@ -19,6 +19,8 @@ namespace MvcCleanArch.Domain.Models
 
     public virtual ICollection<MovieUser> Movies { get; set; } = new List<MovieUser>();
 
-
+    public virtual IEnumerable<Movie> FavouriteMovies => Movies
+        .Where(um => um.IsFavourite)
+        .Select(um => um.Movie);
   }
 }
