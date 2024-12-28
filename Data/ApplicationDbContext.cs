@@ -11,27 +11,26 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
     }
 
-    public DbSet<Todo> Todos { get; set; }
     public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<Movie> Movies { get; set; }
+    public DbSet<MovieUser> MoviesUsers { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder builder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(builder);
+        modelBuilder.Entity<MovieUser>()
+            .HasKey(um => new { um.UserId, um.MovieId });
 
-        builder.Entity<AppUser>(entity =>
-        {
-            entity.HasMany(e => e.Todos)
-                .WithOne()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        modelBuilder.Entity<MovieUser>()
+            .HasOne(um => um.User)
+            .WithMany(u => u.Movies)
+            .HasForeignKey(um => um.UserId);
 
-        builder.Entity<Todo>(entity =>
-        {
-            entity.HasOne(e => e.User)
-                .WithMany(e => e.Todos)
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
+        modelBuilder.Entity<MovieUser>()
+            .HasOne(um => um.Movie)
+            .WithMany(m => m.Users)
+            .HasForeignKey(um => um.MovieId);
+
+        base.OnModelCreating(modelBuilder);
     }
+
 }

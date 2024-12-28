@@ -17,7 +17,8 @@ namespace MvcCleanArch.Models
     [MinLength(3, ErrorMessage = "Last Name must be at least 3 characters long")]
     public required string LastName { get; set; }
 
-    [Display(Name = "Todos List")]
-    public virtual ICollection<Todo>? Todos { get; set; }
+    public virtual ICollection<MovieUser> Movies { get; set; } = new List<MovieUser>();
+
+
   }
 }
