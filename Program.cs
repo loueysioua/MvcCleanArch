@@ -2,16 +2,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Infrastructure.Persistence.DbContext;
 using MvcCleanArch.Domain.Models;
+using MvcCleanArch.Application.Mappers;
 using MvcCleanArch.Domain.Interfaces;
 using MvcCleanArch.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
@@ -26,6 +30,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>().
     AddDefaultUI()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
