@@ -163,5 +163,6 @@ namespace MvcCleanArch.Controllers
         {
             return _context.AppUsers.Any(e => e.Id == id);
         }
+
     }
 }
