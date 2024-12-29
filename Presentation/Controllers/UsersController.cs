@@ -47,7 +47,7 @@ namespace MvcCleanArch.Controllers
         // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,UserName,Email")] AppUser appUser)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,UserName,Email,Password,PhoneNumber")] AppUser appUser)
         {
             if (ModelState.IsValid)
             {
