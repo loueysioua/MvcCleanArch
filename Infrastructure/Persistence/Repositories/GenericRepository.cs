@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Domain.Interfaces;
+using MvcCleanArch.Domain.Models;
 using MvcCleanArch.Infrastructure.Persistence.DbContext;
 
 
@@ -52,5 +53,9 @@ namespace MvcCleanArch.Infrastructure.Persistence.Repositories
             return await _dbSet.AnyAsync(predicate);
         }
 
+        public async Task<AppUser> GetByIdAsync(string id)
+        {
+            return await _dbSet.OfType<AppUser>().FirstOrDefaultAsync(e => e.Id == id)!;
+        }
     }
 }

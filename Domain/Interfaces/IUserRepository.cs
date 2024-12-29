@@ -4,10 +4,10 @@ namespace MvcCleanArch.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<MovieUser>> GetAllAsync();
-        Task<Genre> GetByIdAsync(Guid id);
+        Task<IEnumerable<AppUser>> GetAllAsync();
+        Task<AppUser> GetByIdAsync(string id);
         Task AddAsync(AppUser user);
         Task UpdateAsync(AppUser user);
-        Task DeleteAsync(Guid id);
+        Task DeleteAsync(string id);
     }
 }

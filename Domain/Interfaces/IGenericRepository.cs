@@ -1,3 +1,5 @@
+using MvcCleanArch.Domain.Models;
+
 namespace MvcCleanArch.Domain.Interfaces
 {
     public interface IGenericRepository<T> where T : class
@@ -7,5 +9,6 @@ namespace MvcCleanArch.Domain.Interfaces
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task<AppUser> GetByIdAsync(string id);
     }
 }

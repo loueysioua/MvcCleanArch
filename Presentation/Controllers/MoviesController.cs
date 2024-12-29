@@ -7,23 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Infrastructure.Persistence.DbContext;
 using MvcCleanArch.Domain.Models;
+using MvcCleanArch.Domain.Interfaces;
 
 namespace MvcCleanArch.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMovieRepository _movieRepository;
+        private readonly IGenreRepository _genreRepository;
 
-        public MoviesController(ApplicationDbContext context)
+
+        public MoviesController(IMovieRepository movieRepository, IGenreRepository genreRepository)
         {
-            _context = context;
+            _movieRepository = movieRepository;
+            _genreRepository = genreRepository;
+
         }
 
         // GET: Movies
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Movies.Include(m => m.Genre);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _movieRepository.GetAllAsync());
+
         }
 
         // GET: Movies/Details/5
@@ -34,9 +39,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies
-                .Include(m => m.Genre)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await _movieRepository.GetByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -46,9 +49,10 @@ namespace MvcCleanArch.Controllers
         }
 
         // GET: Movies/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "GenreName");
+            var genres = await _genreRepository.GetAllAsync();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName");
             return View();
         }
 
@@ -62,11 +66,11 @@ namespace MvcCleanArch.Controllers
             if (ModelState.IsValid)
             {
                 movie.Id = Guid.NewGuid();
-                _context.Add(movie);
-                await _context.SaveChangesAsync();
+                await _movieRepository.AddAsync(movie);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "GenreName", movie.GenreId);
+            var genres = await _genreRepository.GetAllAsync();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
             return View(movie);
         }
 
@@ -78,12 +82,13 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _movieRepository.GetByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
             }
-            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "GenreName", movie.GenreId);
+            var genres = await _genreRepository.GetAllAsync();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
             return View(movie);
         }
 
@@ -103,23 +108,17 @@ namespace MvcCleanArch.Controllers
             {
                 try
                 {
-                    _context.Update(movie);
-                    await _context.SaveChangesAsync();
+                    await _movieRepository.UpdateAsync(movie);
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MovieExists(movie.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GenreId"] = new SelectList(_context.Set<Genre>(), "Id", "GenreName", movie.GenreId);
+            var genres = await _genreRepository.GetAllAsync();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
             return View(movie);
         }
 
@@ -131,9 +130,8 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies
-                .Include(m => m.Genre)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await _movieRepository.GetByIdAsync(id.Value);
+
             if (movie == null)
             {
                 return NotFound();
@@ -147,19 +145,14 @@ namespace MvcCleanArch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _movieRepository.GetByIdAsync(id);
             if (movie != null)
             {
-                _context.Movies.Remove(movie);
+                await _movieRepository.DeleteAsync(id);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MovieExists(Guid id)
-        {
-            return _context.Movies.Any(e => e.Id == id);
-        }
     }
 }
