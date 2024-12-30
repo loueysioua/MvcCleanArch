@@ -5,6 +5,10 @@ using MvcCleanArch.Domain.Models;
 using MvcCleanArch.Application.Mappers;
 using MvcCleanArch.Domain.Interfaces;
 using MvcCleanArch.Infrastructure.Persistence.Repositories;
+using MvcCleanArch.Application.Services;
+using MvcCleanArch.Application.Services.ServiceContracts;
+using MvcCleanArch.Domain.Services.ServiceContracts;
+using MvcCleanArch.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +43,12 @@ builder.Services.AddScoped<IMovieUserRepository, MovieUserRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
+builder.Services.AddScoped<IGenreService, GenreService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMovieUserDomainService, MovieUserDomainService>();
+
 
 
 builder.Services.AddControllersWithViews()

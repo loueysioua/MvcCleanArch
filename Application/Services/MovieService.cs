@@ -24,12 +24,12 @@ namespace MvcCleanArch.Application.Services
       _movieUserService = movieUserService;
     }
 
-    public async Task<IEnumerable<MovieDto>> GetAllMoviesAsync()
+    public async Task<IEnumerable<Movie>> GetAllMoviesAsync()
     {
       try
       {
         var movies = await _movieRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<MovieDto>>(movies);
+        return _mapper.Map<IEnumerable<Movie>>(movies);
       }
       catch (Exception ex)
       {
@@ -38,12 +38,12 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<MovieDto?> GetMovieByIdAsync(Guid id)
+    public async Task<Movie?> GetMovieByIdAsync(Guid id)
     {
       try
       {
         var movie = await _movieRepository.GetByIdAsync(id);
-        return movie == null ? null : _mapper.Map<MovieDto>(movie);
+        return movie == null ? null : _mapper.Map<Movie>(movie);
       }
       catch (Exception ex)
       {
@@ -52,13 +52,14 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<MovieDto> CreateMovieAsync(CreateMovieDto createMovieDto)
+    public async Task<Movie> CreateMovieAsync(CreateMovieDto createMovieDto)
     {
       try
       {
         var movie = _mapper.Map<Movie>(createMovieDto);
+        movie.Id = Guid.NewGuid();
         await _movieRepository.AddAsync(movie);
-        return _mapper.Map<MovieDto>(movie);
+        return movie;
       }
       catch (Exception ex)
       {
@@ -67,7 +68,7 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<MovieDto> UpdateMovieAsync(Guid movieId, UpdateMovieDto updateMovieDto)
+    public async Task<Movie> UpdateMovieAsync(Guid movieId, UpdateMovieDto updateMovieDto)
     {
       try
       {
@@ -80,7 +81,7 @@ namespace MvcCleanArch.Application.Services
 
         _mapper.Map(updateMovieDto, movie);
         await _movieRepository.UpdateAsync(movie);
-        return _mapper.Map<MovieDto>(movie);
+        return movie;
       }
       catch (Exception ex)
       {

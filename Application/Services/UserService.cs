@@ -20,12 +20,12 @@ namespace MvcCleanArch.Application.Services
       _logger = logger;
     }
 
-    public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+    public async Task<IEnumerable<AppUser>> GetAllUsersAsync()
     {
       try
       {
         var users = await _userRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<UserDto>>(users);
+        return _mapper.Map<IEnumerable<AppUser>>(users);
       }
       catch (Exception ex)
       {
@@ -34,12 +34,12 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<UserDto?> GetUserByIdAsync(string id)
+    public async Task<AppUser?> GetUserByIdAsync(string id)
     {
       try
       {
         var user = await _userRepository.GetByIdAsync(id);
-        return user == null ? null : _mapper.Map<UserDto>(user);
+        return user == null ? null : _mapper.Map<AppUser>(user);
       }
       catch (Exception ex)
       {
@@ -48,13 +48,14 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task CreateUserAsync(CreateUserDto createUserDto)
+    public async Task<AppUser> CreateUserAsync(CreateUserDto createUserDto)
     {
       try
       {
         var user = _mapper.Map<AppUser>(createUserDto);
         user.Id = Guid.NewGuid().ToString();
         await _userRepository.AddAsync(user);
+        return user;
       }
       catch (Exception ex)
       {
@@ -63,7 +64,7 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task UpdateUserAsync(string id, UpdateUserDto updateUserDto)
+    public async Task<AppUser> UpdateUserAsync(string id, UpdateUserDto updateUserDto)
     {
       try
       {
@@ -76,6 +77,7 @@ namespace MvcCleanArch.Application.Services
 
         _mapper.Map(updateUserDto, user);
         await _userRepository.UpdateAsync(user);
+        return user;
       }
       catch (Exception ex)
       {

@@ -20,12 +20,12 @@ namespace MvcCleanArch.Application.Services
       _logger = logger;
     }
 
-    public async Task<IEnumerable<GenreDto>> GetAllGenresAsync()
+    public async Task<IEnumerable<Genre>> GetAllGenresAsync()
     {
       try
       {
         var genres = await _genreRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<GenreDto>>(genres);
+        return _mapper.Map<IEnumerable<Genre>>(genres);
       }
       catch (Exception ex)
       {
@@ -34,12 +34,12 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<GenreDto?> GetGenreByIdAsync(Guid id)
+    public async Task<Genre?> GetGenreByIdAsync(Guid id)
     {
       try
       {
         var genre = await _genreRepository.GetByIdAsync(id);
-        return genre == null ? null : _mapper.Map<GenreDto>(genre);
+        return genre == null ? null : _mapper.Map<Genre>(genre);
       }
       catch (Exception ex)
       {
@@ -48,13 +48,14 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<GenreDto> CreateGenreAsync(CreateGenreDto createGenreDto)
+    public async Task<Genre> CreateGenreAsync(CreateGenreDto createGenreDto)
     {
       try
       {
         var genre = _mapper.Map<Genre>(createGenreDto);
+        genre.Id = Guid.NewGuid();
         await _genreRepository.AddAsync(genre);
-        return _mapper.Map<GenreDto>(genre);
+        return _mapper.Map<Genre>(genre);
       }
       catch (Exception ex)
       {
@@ -63,7 +64,7 @@ namespace MvcCleanArch.Application.Services
       }
     }
 
-    public async Task<GenreDto> UpdateGenreAsync(Guid genreId, UpdateGenreDto updateGenreDto)
+    public async Task<Genre> UpdateGenreAsync(Guid genreId, UpdateGenreDto updateGenreDto)
     {
       try
       {
@@ -76,7 +77,7 @@ namespace MvcCleanArch.Application.Services
 
         _mapper.Map(updateGenreDto, genre);
         await _genreRepository.UpdateAsync(genre);
-        return _mapper.Map<GenreDto>(genre);
+        return genre;
       }
       catch (Exception ex)
       {

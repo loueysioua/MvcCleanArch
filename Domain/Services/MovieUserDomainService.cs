@@ -20,7 +20,7 @@ namespace MvcCleanArch.Domain.Services
     {
       try
       {
-        return await _userMovieRepository.GetByIdAsync(movieId, userId,);
+        return await _userMovieRepository.GetByIdAsync(movieId, userId);
       }
       catch (Exception ex)
       {

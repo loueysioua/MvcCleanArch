@@ -8,26 +8,28 @@ using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Infrastructure.Persistence.DbContext;
 using MvcCleanArch.Domain.Models;
 using MvcCleanArch.Domain.Interfaces;
+using MvcCleanArch.Application.Services.ServiceContracts;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using MvcCleanArch.Application.DTOs.MovieDtos;
 
 namespace MvcCleanArch.Controllers
 {
     public class MoviesController : Controller
     {
-        private readonly IMovieRepository _movieRepository;
-        private readonly IGenreRepository _genreRepository;
+        private readonly IMovieService _movieService;
+        private readonly IGenreService _genreService;
 
-
-        public MoviesController(IMovieRepository movieRepository, IGenreRepository genreRepository)
+        public MoviesController(IMovieService movieService, IGenreService genreService)
         {
-            _movieRepository = movieRepository;
-            _genreRepository = genreRepository;
-
+            _movieService = movieService;
+            _genreService = genreService;
         }
+
 
         // GET: Movies
         public async Task<IActionResult> Index()
         {
-            return View(await _movieRepository.GetAllAsync());
+            return View(await _movieService.GetAllMoviesAsync());
 
         }
 
@@ -39,7 +41,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var movie = await _movieRepository.GetByIdAsync(id.Value);
+            var movie = await _movieService.GetMovieByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
@@ -51,7 +53,7 @@ namespace MvcCleanArch.Controllers
         // GET: Movies/Create
         public async Task<IActionResult> Create()
         {
-            var genres = await _genreRepository.GetAllAsync();
+            var genres = await _movieService.GetAllMoviesAsync();
             ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName");
             return View();
         }
@@ -61,17 +63,10 @@ namespace MvcCleanArch.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,GenreId")] Movie movie)
+        public async Task<IActionResult> Create(CreateMovieDto movie)
         {
-            if (ModelState.IsValid)
-            {
-                movie.Id = Guid.NewGuid();
-                await _movieRepository.AddAsync(movie);
-                return RedirectToAction(nameof(Index));
-            }
-            var genres = await _genreRepository.GetAllAsync();
-            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
-            return View(movie);
+            await _movieService.CreateMovieAsync(movie);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Movies/Edit/5
@@ -82,12 +77,12 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var movie = await _movieRepository.GetByIdAsync(id.Value);
+            var movie = await _movieService.GetMovieByIdAsync(id.Value);
             if (movie == null)
             {
                 return NotFound();
             }
-            var genres = await _genreRepository.GetAllAsync();
+            var genres = await _genreService.GetAllGenresAsync();
             ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
             return View(movie);
         }
@@ -97,46 +92,16 @@ namespace MvcCleanArch.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,GenreId")] Movie movie)
+        public async Task<IActionResult> Edit(Guid id, UpdateMovieDto movie)
         {
-            if (id != movie.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _movieRepository.UpdateAsync(movie);
-
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            var genres = await _genreRepository.GetAllAsync();
-            ViewData["GenreId"] = new SelectList(genres, "Id", "GenreName", movie.GenreId);
-            return View(movie);
+            await _movieService.UpdateMovieAsync(id, movie);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var movie = await _movieRepository.GetByIdAsync(id.Value);
-
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
+            var movie = await _movieService.GetMovieByIdAsync(id.Value);
             return View(movie);
         }
 
@@ -145,12 +110,7 @@ namespace MvcCleanArch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var movie = await _movieRepository.GetByIdAsync(id);
-            if (movie != null)
-            {
-                await _movieRepository.DeleteAsync(id);
-            }
-
+            await _movieService.DeleteMovieAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

@@ -2,22 +2,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MvcCleanArch.Domain.Models;
 using MvcCleanArch.Domain.Interfaces;
+using MvcCleanArch.Application.Services.ServiceContracts;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using MvcCleanArch.Application.DTOs.GenreDtos;
 
 namespace MvcCleanArch.Controllers
 {
     public class GenresController : Controller
     {
-        private readonly IGenreRepository _genreRepository;
+        private readonly IGenreService _genreService;
 
-        public GenresController(IGenreRepository genreRepository)
+        public GenresController(IGenreService genreService)
         {
-            _genreRepository = genreRepository;
+            _genreService = genreService;
         }
 
         // GET: Genres
         public async Task<IActionResult> Index()
         {
-            return View(await _genreRepository.GetAllAsync());
+            return View(await _genreService.GetAllGenresAsync());
         }
 
         // GET: Genres/Details/5
@@ -27,7 +30,7 @@ namespace MvcCleanArch.Controllers
             {
                 return NotFound();
             }
-            var genre = await _genreRepository.GetByIdAsync(id.Value);
+            var genre = await _genreService.GetGenreByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -47,15 +50,10 @@ namespace MvcCleanArch.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,GenreName")] Genre genre)
+        public async Task<IActionResult> Create(CreateGenreDto genre)
         {
-            if (ModelState.IsValid)
-            {
-                genre.Id = Guid.NewGuid();
-                await _genreRepository.AddAsync(genre);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(genre);
+            await _genreService.CreateGenreAsync(genre);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Genres/Edit/5
@@ -66,7 +64,7 @@ namespace MvcCleanArch.Controllers
                 return NotFound();
             }
 
-            var genre = await _genreRepository.GetByIdAsync(id.Value);
+            var genre = await _genreService.GetGenreByIdAsync(id.Value);
             if (genre == null)
             {
                 return NotFound();
@@ -79,41 +77,16 @@ namespace MvcCleanArch.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,GenreName")] Genre genre)
+        public async Task<IActionResult> Edit(Guid id, UpdateGenreDto genre)
         {
-            if (id != genre.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _genreRepository.UpdateAsync(genre);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(genre);
+            await _genreService.UpdateGenreAsync(id, genre);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Genres/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var genre = await _genreRepository.GetByIdAsync(id.Value);
-            if (genre == null)
-            {
-                return NotFound();
-            }
+            var genre = await _genreService.GetGenreByIdAsync(id.Value);
 
             return View(genre);
         }
@@ -123,12 +96,7 @@ namespace MvcCleanArch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var genre = await _genreRepository.GetByIdAsync(id);
-            if (genre != null)
-            {
-                await _genreRepository.DeleteAsync(id);
-            }
-
+            await _genreService.DeleteGenreAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

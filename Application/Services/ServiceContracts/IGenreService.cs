@@ -1,13 +1,14 @@
 using MvcCleanArch.Application.DTOs.GenreDtos;
+using MvcCleanArch.Domain.Models;
 
 namespace MvcCleanArch.Application.Services.ServiceContracts
 {
   public interface IGenreService
   {
-    Task<IEnumerable<GenreDto>> GetAllGenresAsync();
-    Task<GenreDto?> GetGenreByIdAsync(Guid id);
-    Task<GenreDto> CreateGenreAsync(CreateGenreDto createGenreDto);
-    Task<GenreDto> UpdateGenreAsync(Guid genreId, UpdateGenreDto updateGenreDto);
+    Task<IEnumerable<Genre>> GetAllGenresAsync();
+    Task<Genre?> GetGenreByIdAsync(Guid id);
+    Task<Genre> CreateGenreAsync(CreateGenreDto createGenreDto);
+    Task<Genre> UpdateGenreAsync(Guid genreId, UpdateGenreDto updateGenreDto);
     Task DeleteGenreAsync(Guid id);
   }
 }
